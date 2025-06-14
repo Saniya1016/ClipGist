@@ -1,11 +1,18 @@
 import whisper
 import yt_dlp
 import os
+import json
+
+def ensure_directory_exists(path):
+    directory = os.path.dirname(path)
+    if not os.path.exists(directory):
+        os.makedirs(directory, exist_ok=True)
+        print(f"Created directory: {directory}")
 
 
 def download_audio_from_youtube(url, output_dir="data/audio", filename="audio"):
     
-    os.makedirs(output_dir, exist_ok=True)
+    ensure_directory_exists(output_dir)  # Ensure the output directory exists
     output_path = os.path.join(output_dir, filename)  # No extension here
     
     ydl_opts = {
@@ -24,11 +31,18 @@ def download_audio_from_youtube(url, output_dir="data/audio", filename="audio"):
     
     return output_path + ".mp3"  # Return full path including extension
 
+
 def transcribe_audio(audio_path):
+
+    transcript_path = "data/transcripts"
+    ensure_directory_exists(transcript_path)  # Ensure the transcript directory exists
+
     model = whisper.load_model("base")
     result = model.transcribe(audio_path)
+    filename = os.path.join(transcript_path , "transcripts.json")
+    with open(filename, 'w') as f:
+        json.dump(result, f, indent=4)  # Save the transcription result to a JSON file
     return result['text']# Return the transcribed text
-
 
 
 if __name__ == "__main__":

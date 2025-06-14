@@ -1,3 +1,4 @@
 # Ignore all audio files
 data/audio/
 *.mp3
+.DS_Store
