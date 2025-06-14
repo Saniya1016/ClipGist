@@ -24,8 +24,17 @@ def download_audio_from_youtube(url, output_dir="data/audio", filename="audio"):
     
     return output_path + ".mp3"  # Return full path including extension
 
+def transcribe_audio(audio_path):
+    model = whisper.load_model("base")
+    result = model.transcribe(audio_path)
+    return result['text']# Return the transcribed text
 
 
-youtube_url= "https://www.youtube.com/watch?v=IWwI-coTp44&ab_channel=Psych2Go"
-audio_path = download_audio_from_youtube(youtube_url)  # download the audio file
-print(f"Audio downloaded to: {audio_path}")
+
+if __name__ == "__main__":
+
+    youtube_url = "https://www.youtube.com/watch?v=wgbV6DLVezo&ab_channel=TED-Ed"
+    audio_path = download_audio_from_youtube(youtube_url)  # download the audio file
+    print(f"Audio downloaded to: {audio_path}") # print the path of the downloaded audio file
+    transcript = transcribe_audio(audio_path) # transcribe the audio file
+    print(f"Transcription: {transcript}") # print the transcription
