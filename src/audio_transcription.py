@@ -42,7 +42,7 @@ def transcribe_audio(audio_path):
     filename = os.path.join(transcript_path , "transcripts.json")
     with open(filename, 'w') as f:
         json.dump(result, f, indent=4)  # Save the transcription result to a JSON file
-    return result['text']# Return the transcribed text
+    return result # Return the transcribed text with segments
 
 
 if __name__ == "__main__":
@@ -51,4 +51,7 @@ if __name__ == "__main__":
     audio_path = download_audio_from_youtube(youtube_url)  # download the audio file
     print(f"Audio downloaded to: {audio_path}") # print the path of the downloaded audio file
     transcript = transcribe_audio(audio_path) # transcribe the audio file
-    print(f"Transcription: {transcript}") # print the transcription
+    transcript_text = transcript['text']  # Extract the text from the transcription result
+    transcript_segments = transcript['segments']  # Extract the segments from the transcription
+    print(f"Transcription text: {transcript_text}") # print the transcription text
+    print(f"Transcription segments: {transcript_segments}")  # print the transcription segments
