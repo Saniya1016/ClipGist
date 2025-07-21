@@ -78,6 +78,8 @@ def transcribe_video(video_path, segments, draw_text = False):
 
     fps = cap.get(cv2.CAP_PROP_FPS)  # Get the frames per second of the video
 
+    data = []
+
     for i, segment in enumerate(segments):
         frame_number = int(segment['start']) * fps
 
@@ -95,6 +97,17 @@ def transcribe_video(video_path, segments, draw_text = False):
         frame_filename = os.path.join(output_dir, f"frame_{i:04d}.jpg")
         cv2.imwrite(frame_filename, frame)  # Save the frame as an image
 
+        data.append({
+            "start": segment['start'],
+            "end": segment['end'],
+            "text": segment['text'],
+            "frame_path": frame_filename
+        })
+
+    # Save the data to a JSON file
+    with open("data/frame_segment_pairs.json", "w") as f:
+        json.dump(data, f, indent=2)
+
     cap.release()
     print(f"frames synched to transcript segments, and saved in '{output_dir}'.")
     return
@@ -107,5 +120,5 @@ if __name__ == "__main__":
     with open("data/transcripts/transcripts.json", 'r') as f:
         transcript = json.load(f)
     
-    transcribe_video(video_path, transcript['segments'], True)  # transcribe the video file
+    transcribe_video(video_path, transcript['segments'])  # transcribe the video file
     # print
