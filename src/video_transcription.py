@@ -4,10 +4,9 @@ import json
 import cv2
 
 def ensure_directory_exists(path):
-    directory = os.path.dirname(path)
-    if not os.path.exists(directory):
-        os.makedirs(directory, exist_ok=True)
-        print(f"Created directory: {directory}")
+    if not os.path.exists(path):
+        os.makedirs(path, exist_ok=True)
+        print(f"Created directory: {path}")
 
 def download_video_from_youtube(url, output_dir="data/video", filename="video"):
     ensure_directory_exists(output_dir)  # Ensure the output directory exists
@@ -29,7 +28,43 @@ def download_video_from_youtube(url, output_dir="data/video", filename="video"):
     return output_path + ".mp4"  # Return full path including extension
 
 
-def transcribe_video(video_path, segments):
+import cv2
+
+def draw_text_on_frame(frame, text, font_scale=0.6, font_thickness=1):
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    color = (255, 255, 255)       # White text
+    bg_color = (0, 0, 0)          # Black background
+    margin = 10
+
+    # Wrap text manually (since OpenCV doesn't do it natively)
+    max_width = frame.shape[1] - 2 * margin
+    words = text.split()
+    lines = []
+    line = ""
+    for word in words:
+        test_line = f"{line} {word}".strip()
+        text_size = cv2.getTextSize(test_line, font, font_scale, font_thickness)[0]
+        if text_size[0] <= max_width:
+            line = test_line
+        else:
+            lines.append(line)
+            line = word
+    lines.append(line)
+
+    y = margin
+    for line in lines:
+        text_size = cv2.getTextSize(line, font, font_scale, font_thickness)[0]
+        x = margin
+        # Background rectangle
+        cv2.rectangle(frame, (x - 5, y - 15), (x + text_size[0] + 5, y + 5), bg_color, -1)
+        # Text
+        cv2.putText(frame, line, (x, y), font, font_scale, color, font_thickness, cv2.LINE_AA)
+        y += int(text_size[1] * 1.5)
+    
+    return frame
+
+
+def transcribe_video(video_path, segments, draw_text = False):
 
     cap = cv2.VideoCapture(video_path)
 
@@ -52,6 +87,11 @@ def transcribe_video(video_path, segments):
             print(f"Error: Could not read frame at {segment['start']} seconds.")
             continue
 
+        # Draw the text on the frame
+        if draw_text:
+            text = segment["text"]
+            frame = draw_text_on_frame(frame, text)
+
         frame_filename = os.path.join(output_dir, f"frame_{i:04d}.jpg")
         cv2.imwrite(frame_filename, frame)  # Save the frame as an image
 
@@ -67,5 +107,5 @@ if __name__ == "__main__":
     with open("data/transcripts/transcripts.json", 'r') as f:
         transcript = json.load(f)
     
-    transcribe_video(video_path, transcript['segments'])  # transcribe the video file
+    transcribe_video(video_path, transcript['segments'], True)  # transcribe the video file
     # print

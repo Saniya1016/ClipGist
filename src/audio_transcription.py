@@ -4,10 +4,9 @@ import os
 import json
 
 def ensure_directory_exists(path):
-    directory = os.path.dirname(path)
-    if not os.path.exists(directory):
-        os.makedirs(directory, exist_ok=True)
-        print(f"Created directory: {directory}")
+    if not os.path.exists(path):
+        os.makedirs(path, exist_ok=True)
+        print(f"Created directory: {path}")
 
 
 def download_audio_from_youtube(url, output_dir="data/audio", filename="audio"):
