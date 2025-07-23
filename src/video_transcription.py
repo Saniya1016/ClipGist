@@ -2,11 +2,7 @@ import yt_dlp
 import os
 import json
 import cv2
-
-def ensure_directory_exists(path):
-    if not os.path.exists(path):
-        os.makedirs(path, exist_ok=True)
-        print(f"Created directory: {path}")
+from utils.helpers import ensure_directory_exists
 
 def download_video_from_youtube(url, output_dir="data/video", filename="video"):
     ensure_directory_exists(output_dir)  # Ensure the output directory exists
@@ -27,8 +23,6 @@ def download_video_from_youtube(url, output_dir="data/video", filename="video"):
     
     return output_path + ".mp4"  # Return full path including extension
 
-
-import cv2
 
 def draw_text_on_frame(frame, text, font_scale=0.6, font_thickness=1):
     font = cv2.FONT_HERSHEY_SIMPLEX

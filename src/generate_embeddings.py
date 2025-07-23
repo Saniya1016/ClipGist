@@ -12,6 +12,7 @@ def load_clip_model(model_name='openai/clip-vit-base-patch32'):
     processor = CLIPProcessor.from_pretrained(model_name)
     return model, processor
 
+
 def generate_embeddings(frame_segment_pairs_path, model, processor):
     """
     Generate embeddings for a given image using the CLIP model.

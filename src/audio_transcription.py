@@ -2,11 +2,7 @@ import whisper
 import yt_dlp
 import os
 import json
-
-def ensure_directory_exists(path):
-    if not os.path.exists(path):
-        os.makedirs(path, exist_ok=True)
-        print(f"Created directory: {path}")
+from utils.helpers import ensure_directory_exists
 
 
 def download_audio_from_youtube(url, output_dir="data/audio", filename="audio"):
@@ -41,7 +37,7 @@ def transcribe_audio(audio_path):
     filename = os.path.join(transcript_path , "transcripts.json")
     with open(filename, 'w') as f:
         json.dump(result, f, indent=4)  # Save the transcription result to a JSON file
-    return result # Return the transcribed text with segments
+    return result   # Return the transcribed text with segments
 
 
 if __name__ == "__main__":
